@@ -1,0 +1,24 @@
+package com.taskengine.app.infra.persistence;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.UUID;
+
+@Entity
+@Getter
+@Setter
+public class PersistentProcess extends BaseEntity {
+
+    @Id
+    @Column(name = "ID")
+    private UUID id;
+    @Column(name = "DEFINITION_ID")
+    private String definitionId;
+    @Column(name = "VERSION")
+    private Long version;
+    @ManyToOne
+    @JoinColumn(name = "FLOW_ID", nullable = false)
+    private PersistentFlow flow;
+}
