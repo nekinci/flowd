@@ -4,33 +4,15 @@
     <startEvent id="StartEvent_1y45yut" name="hunger noticed">
       <outgoing>SequenceFlow_0h21x7r</outgoing>
     </startEvent>
-    <task id="Task_1hcentk" name="choose recipe">
-      <incoming>SequenceFlow_0h21x7r</incoming>
-      <outgoing>SequenceFlow_0wnb4ke</outgoing>
-    </task>
     <sequenceFlow id="SequenceFlow_0h21x7r" sourceRef="StartEvent_1y45yut" targetRef="Task_1hcentk" />
-    <exclusiveGateway id="ExclusiveGateway_15hu1pt" name="desired dish?" default="Flow_1pw0pdp">
-      <incoming>SequenceFlow_0wnb4ke</incoming>
-      <outgoing>Flow_0c8bspe</outgoing>
-      <outgoing>Flow_1pw0pdp</outgoing>
-    </exclusiveGateway>
-    <sequenceFlow id="SequenceFlow_0wnb4ke" sourceRef="Task_1hcentk" targetRef="ExclusiveGateway_15hu1pt" />
-    <task id="Activity_0cnmz1x" name="Yeni1">
-      <incoming>Flow_0c8bspe</incoming>
-      <outgoing>Flow_0awo779</outgoing>
-    </task>
-    <sequenceFlow id="Flow_0c8bspe" sourceRef="ExclusiveGateway_15hu1pt" targetRef="Activity_0cnmz1x" />
-    <task id="Activity_0exxwr8" name="Yeni2">
-      <incoming>Flow_1pw0pdp</incoming>
-      <outgoing>Flow_0r604iv</outgoing>
-    </task>
-    <sequenceFlow id="Flow_1pw0pdp" sourceRef="ExclusiveGateway_15hu1pt" targetRef="Activity_0exxwr8" />
-    <endEvent id="Event_1nowgiy">
-      <incoming>Flow_0awo779</incoming>
-      <incoming>Flow_0r604iv</incoming>
+    <endEvent id="Event_0002x09">
+      <incoming>Flow_0tox6t0</incoming>
     </endEvent>
-    <sequenceFlow id="Flow_0awo779" sourceRef="Activity_0cnmz1x" targetRef="Event_1nowgiy" />
-    <sequenceFlow id="Flow_0r604iv" sourceRef="Activity_0exxwr8" targetRef="Event_1nowgiy" />
+    <sequenceFlow id="Flow_0tox6t0" sourceRef="Task_1hcentk" targetRef="Event_0002x09" />
+    <serviceTask id="Task_1hcentk" name="choose recipe">
+      <incoming>SequenceFlow_0h21x7r</incoming>
+      <outgoing>Flow_0tox6t0</outgoing>
+    </serviceTask>
   </process>
   <bpmndi:BPMNDiagram id="BpmnDiagram_1">
     <bpmndi:BPMNPlane id="BpmnPlane_1" bpmnElement="Process_1">
@@ -40,50 +22,19 @@
           <omgdc:Bounds x="134" y="145" width="73" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_1hcentk_di" bpmnElement="Task_1hcentk">
+      <bpmndi:BPMNShape id="Event_0002x09_di" bpmnElement="Event_0002x09">
+        <omgdc:Bounds x="392" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ovjp73_di" bpmnElement="Task_1hcentk">
         <omgdc:Bounds x="240" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_15hu1pt_di" bpmnElement="ExclusiveGateway_15hu1pt" isMarkerVisible="true">
-        <omgdc:Bounds x="445" y="95" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="437" y="71" width="66" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0cnmz1x_di" bpmnElement="Activity_0cnmz1x">
-        <omgdc:Bounds x="570" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0exxwr8_di" bpmnElement="Activity_0exxwr8">
-        <omgdc:Bounds x="420" y="250" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1nowgiy_di" bpmnElement="Event_1nowgiy">
-        <omgdc:Bounds x="872" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0h21x7r_di" bpmnElement="SequenceFlow_0h21x7r">
         <omgdi:waypoint x="188" y="120" />
         <omgdi:waypoint x="240" y="120" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0wnb4ke_di" bpmnElement="SequenceFlow_0wnb4ke">
+      <bpmndi:BPMNEdge id="Flow_0tox6t0_di" bpmnElement="Flow_0tox6t0">
         <omgdi:waypoint x="340" y="120" />
-        <omgdi:waypoint x="445" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0c8bspe_di" bpmnElement="Flow_0c8bspe">
-        <omgdi:waypoint x="495" y="120" />
-        <omgdi:waypoint x="570" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1pw0pdp_di" bpmnElement="Flow_1pw0pdp">
-        <omgdi:waypoint x="470" y="145" />
-        <omgdi:waypoint x="470" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0awo779_di" bpmnElement="Flow_0awo779">
-        <omgdi:waypoint x="670" y="120" />
-        <omgdi:waypoint x="872" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0r604iv_di" bpmnElement="Flow_0r604iv">
-        <omgdi:waypoint x="520" y="290" />
-        <omgdi:waypoint x="890" y="290" />
-        <omgdi:waypoint x="890" y="138" />
+        <omgdi:waypoint x="392" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
