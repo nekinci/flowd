@@ -1,5 +1,7 @@
 package com.taskengine.app.core;
 
+import org.w3c.dom.Element;
+
 import javax.xml.namespace.QName;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,5 +22,11 @@ public final class Util {
                         entry -> entry.getKey().getLocalPart(),
                         Map.Entry::getValue
                 ));
+    }
+
+    public static void assertNamespace(Element e) {
+        if (!FlowdConstant.SCHEMA.equals(e.getNamespaceURI())) {
+            throw new IllegalArgumentException("Element " + e.getLocalName() + " does not belong to the Flowd namespace: " + FlowdConstant.SCHEMA);
+        }
     }
 }
