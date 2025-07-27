@@ -1,7 +1,7 @@
 package com.taskengine.app.parser;
 
 import com.taskengine.app.*;
-import com.taskengine.app.core.data.om.ProcessOM;
+import com.taskengine.app.core.data.om.ProcessNode;
 import com.taskengine.app.core.provider.Parser;
 import com.taskengine.app.core.provider.ParserException;
 import com.taskengine.app.parser.converter.Context;
@@ -26,7 +26,7 @@ public class BpmnParser implements Parser {
     }
 
     @Override
-    public List<ProcessOM> parse(InputStream is) throws ParserException {
+    public List<ProcessNode> parse(InputStream is) throws ParserException {
        try {
            JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class);
            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -38,26 +38,26 @@ public class BpmnParser implements Parser {
     }
 
 
-    public List<ProcessOM> convert(JAXBElement<TDefinitions> xml) {
-        List<ProcessOM> processOMS = new ArrayList<>();
+    public List<ProcessNode> convert(JAXBElement<TDefinitions> xml) {
+        List<ProcessNode> processNodes = new ArrayList<>();
         for (JAXBElement<? extends TRootElement> rootElement : xml.getValue().getRootElement()) {
             if (rootElement.getValue() instanceof TProcess) {
                 TProcess tProcess = (TProcess) rootElement.getValue();
-                ProcessOM processOM = transformProcess(tProcess);
-                processOMS.add(processOM);
+                ProcessNode processNode = transformProcess(tProcess);
+                processNodes.add(processNode);
             }
         }
 
-        return processOMS;
+        return processNodes;
     }
 
-    private ProcessOM transformProcess(TProcess tProcess) {
+    private ProcessNode transformProcess(TProcess tProcess) {
 
-        ProcessOM processOM = new ProcessOM(
+        ProcessNode processNode = new ProcessNode(
                 tProcess.getId(),
                 tProcess.getName());
 
-        Context context = new Context(processOM);
+        Context context = new Context(processNode);
 
         Set<TFlowElement> flowNodes = tProcess.getFlowElement()
                 .stream().filter(x -> !(x.getValue() instanceof TSequenceFlow))
@@ -71,15 +71,15 @@ public class BpmnParser implements Parser {
 
         for (TFlowElement flowElement : flowNodes) {
             TFlowElement value = flowElement;
-            processOM.addNode(converterService.convert(context, value));
+            processNode.addNode(converterService.convert(context, value));
         }
 
 
         for (TFlowElement flowElement: sequenceFlows) {
             TSequenceFlow value = (TSequenceFlow) flowElement;
-            processOM.addFlow(converterService.convert(context, value));
+            processNode.addFlow(converterService.convert(context, value));
         }
 
-        return processOM;
+        return processNode;
     }
 }

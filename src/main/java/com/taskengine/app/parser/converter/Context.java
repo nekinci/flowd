@@ -1,6 +1,6 @@
 package com.taskengine.app.parser.converter;
 
-import com.taskengine.app.core.data.om.ProcessOM;
+import com.taskengine.app.core.data.om.ProcessNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Context {
-    private ProcessOM currentProcessOM;
+    private ProcessNode currentProcessNode;
 }

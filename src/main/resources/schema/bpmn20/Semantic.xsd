@@ -1178,7 +1178,7 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:element name="processOM" type="tProcess" substitutionGroup="rootElement"/>
+	<xsd:element name="processNode" type="tProcess" substitutionGroup="rootElement"/>
 	<xsd:complexType name="tProcess">
 		<xsd:complexContent>
 			<xsd:extension base="tCallableElement">

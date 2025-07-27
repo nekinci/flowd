@@ -6,5 +6,5 @@ import com.taskengine.app.infra.persistence.BaseEntity;
 public abstract class DomainEntityConverter<D extends Entity, E extends BaseEntity> {
 
     public abstract E toEntity(D domainEntity);
-    public abstract D toDomain(E entity);
+    public abstract D toDomain(D source, E entity);
 }
