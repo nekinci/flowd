@@ -1,12 +1,12 @@
 package com.taskengine.app.core.provider;
 
-import com.taskengine.app.core.data.om.ProcessOM;
+import com.taskengine.app.core.data.om.ProcessNode;
 
 import java.io.InputStream;
 import java.util.List;
 
 public interface Parser {
 
-    List<ProcessOM> parse(InputStream is) throws ParserException;
+    List<ProcessNode> parse(InputStream is) throws ParserException;
             ;
 }

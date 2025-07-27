@@ -6,6 +6,7 @@ import com.taskengine.app.infra.persistence.PersistentProcess;
 import com.taskengine.app.infra.persistence.repository.PersistentFlowRepository;
 import com.taskengine.app.infra.persistence.repository.PersistentProcessRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,13 +28,13 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
     public Optional<Process> findByDefinitionIdAndVersion(String definitionId, Long version) {
         return persistentProcessRepository
                 .findByDefinitionIdAndVersion(definitionId, version)
-                .map(this::toDomain);
+                .map(persistentProcess -> toDomain(new Process(), persistentProcess));
     }
 
     @Override
     public Optional<Process> findLatestVersionByDefinitionId(String definitionId) {
         return persistentProcessRepository.findLatestVersionByDefinitionId(definitionId)
-                .map(this::toDomain);
+                .map(persistentProcess -> toDomain(new Process(), persistentProcess));
     }
 
     @Override
@@ -41,19 +42,20 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
         return persistentProcessRepository
                 .findByDefinitionId(definitionId)
                 .stream()
-                .map(this::toDomain)
+                .map(persistentProcess -> toDomain(new Process(), persistentProcess))
                 .toList();
     }
 
     @Override
     public Optional<Process> findById(UUID uuid) {
         return persistentProcessRepository.findById(uuid)
-                .map(this::toDomain);
+                .map(persistentProcess -> toDomain(new Process(), persistentProcess));
     }
 
     @Override
+    @Transactional
     public Process save(Process entity) {
-        return toDomain(persistentProcessRepository.save(toEntity(entity)));
+        return toDomain(entity, persistentProcessRepository.save(toEntity(entity)));
     }
 
     @Override
@@ -88,7 +90,7 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
     }
 
     @Override
-    public Process toDomain(PersistentProcess entity) {
+    public Process toDomain(Process process, PersistentProcess entity) {
         return new Process(
                 entity.getId(),
                 entity.getDefinitionId(),

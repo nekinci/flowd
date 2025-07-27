@@ -4,8 +4,9 @@ import com.taskengine.app.core.data.entity.Execution;
 import com.taskengine.app.core.data.repository.ExecutionRepository;
 import com.taskengine.app.infra.persistence.PersistentExecution;
 import com.taskengine.app.infra.persistence.repository.PersistentExecutionRepository;
-import com.taskengine.app.infra.persistence.repository.PersistentFlowRepository;
+import com.taskengine.app.infra.persistence.repository.PersistentProcessRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -15,24 +16,28 @@ public class ExecutionRepositoryImpl
         extends DomainEntityConverter<Execution, PersistentExecution> implements ExecutionRepository {
 
     private final PersistentExecutionRepository persistentExecutionRepository;
-    private final PersistentFlowRepository flowRepository;
+    private final PersistentProcessRepository persistentProcessRepository;
 
     public ExecutionRepositoryImpl(PersistentExecutionRepository persistentExecutionRepository,
-                                   PersistentFlowRepository flowRepository) {
+                                   PersistentProcessRepository persistentProcessRepository) {
         this.persistentExecutionRepository = persistentExecutionRepository;
-        this.flowRepository = flowRepository;
+        this.persistentProcessRepository = persistentProcessRepository;
     }
 
     @Override
     public Optional<Execution> findById(UUID uuid) {
         return persistentExecutionRepository.findById(uuid)
-                .map(this::toDomain);
+                .map(persistentExecution -> {
+                    Execution execution = new Execution();
+                    return toDomain(execution, persistentExecution);
+                });
     }
 
     @Override
+    @Transactional
     public Execution save(Execution entity) {
         PersistentExecution persistentExecution = toEntity(entity);
-        return toDomain(persistentExecutionRepository.save(persistentExecution));
+        return toDomain(entity, persistentExecutionRepository.save(persistentExecution));
     }
 
     @Override
@@ -66,8 +71,10 @@ public class ExecutionRepositoryImpl
             persistentExecution.setParentExecution(parentExecution);
         }
 
-        persistentExecution.setProcessId(domainEntity.getProcessId());
-        persistentExecution.setProcessDefinitonId(domainEntity.getProcessDefinitionId());
+        persistentExecution.setPersistentProcess(persistentProcessRepository.findById(domainEntity.getProcessId())
+                .orElseThrow());
+        persistentExecution.setProcessDefinitionId(domainEntity.getProcessDefinitionId());
+
 
         persistentExecution.setCurrentNodeId(domainEntity.getCurrentNodeId());
         persistentExecution.setStartTime(domainEntity.getStartTime());
@@ -79,12 +86,12 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
-    public Execution toDomain(PersistentExecution entity) {
-        Execution execution = new Execution();
+    public Execution toDomain(Execution execution, PersistentExecution entity) {
         execution.setId(entity.getId());
         execution.setInstanceId(entity.getInstanceId());
-        execution.setProcessDefinitionId(entity.getProcessDefinitonId());
-        execution.setProcessId(entity.getProcessId());
+        execution.setProcessDefinitionId(entity.getProcessDefinitionId());
+        execution.setProcessVersion(entity.getPersistentProcess().getVersion());
+        execution.setProcessId(entity.getPersistentProcess().getId());
        // execution.setVariables(entity.getVariables());
         execution.setParentId(entity.getParentExecution() != null ? entity.getParentExecution().getId() : null);
         execution.setCurrentNodeId(entity.getCurrentNodeId());

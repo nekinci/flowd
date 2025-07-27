@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class ProcessOM {
+public class ProcessNode {
 
     @Getter
     private String id;
@@ -19,7 +19,7 @@ public class ProcessOM {
 
     private final Map<String, Flow> flows;
 
-    public ProcessOM(String id, String name) {
+    public ProcessNode(String id, String name) {
         this.id = id;
         this.name = name;
         this.nodes = new HashMap<>();

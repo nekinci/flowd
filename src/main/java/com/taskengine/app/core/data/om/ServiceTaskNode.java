@@ -5,24 +5,22 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public class ServiceTaskNode extends Node {
+public non-sealed class ServiceTaskNode extends Node {
 
 
     public static final String SERVICE_TASK_PROPERTY = "serviceTask";
+    private final InvokerType invokerType;
 
-    private InvokerType invokerType;
 
-    public ServiceTaskNode(String id, String name, ProcessOM processOM, Map<String, String> attributes) {
-        super(id, name, processOM, NodeType.SERVICE_TASK);
-        setInvokerType(attributes);
+    public ServiceTaskNode(String id,
+                           String name,
+                           ProcessNode processNode,
+                           Map<String, String> attributes,
+                           InvokerType invokerType) {
+        super(id, name, processNode, NodeType.SERVICE_TASK, attributes);
+        this.invokerType = invokerType;
 
     }
-
-    private void setInvokerType(Map<String, String> attributes) {
-        String serviceTypeValue = attributes.getOrDefault(SERVICE_TASK_PROPERTY, InvokerType.EXPRESSION.name());
-        this.invokerType = InvokerType.valueOf(serviceTypeValue.toUpperCase());
-    }
-
 
 
 }

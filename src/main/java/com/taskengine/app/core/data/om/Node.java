@@ -1,23 +1,24 @@
 package com.taskengine.app.core.data.om;
 
 import com.taskengine.app.core.data.om.flow.Flow;
-import com.taskengine.app.core.service.NodeHandler;
-import com.taskengine.app.core.service.engine.ExecutionContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Node implements Element {
+public abstract sealed class Node implements Element
+        permits EndEventNode, ExclusiveGatewayNode, ServiceTaskNode, StartEventNode, UserTaskNode {
     protected String id;
     protected String name;
-    protected ProcessOM processOM;
+    protected ProcessNode processNode;
     protected NodeType nodeType;
+    protected Map<String, String> attributes;
 
     protected final List<Flow> incoming = new ArrayList<>();
     protected final List<Flow> outgoing = new ArrayList<>();
@@ -34,9 +35,4 @@ public abstract class Node implements Element {
     public void addOutgoing(Flow flow) {
         outgoing.add(flow);
     }
-
-    public void accept(NodeHandler handler, ExecutionContext context) {
-        handler.handle(this, context);
-    }
-
 }

@@ -2,7 +2,7 @@ package com.taskengine.app.core.service.engine;
 
 import com.taskengine.app.core.data.entity.Execution;
 import com.taskengine.app.core.data.om.Node;
-import com.taskengine.app.core.data.om.ProcessOM;
+import com.taskengine.app.core.data.om.ProcessNode;
 import lombok.Data;
 
 import java.util.Map;
@@ -10,25 +10,41 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Data
-public class ExecutionContext {
+public class ExecutionContext implements Context {
 
     private String processDefinitionId;
+    private Long processVersion;
     private Engine engine;
+    private Execution.Status status;
     private Execution execution;
     private String currentNodeId;
 
     private UUID parentExecutionId;
     private UUID parentInstanceId;
     private UUID instanceId;
+    private UUID taskId;
     private UUID executionId;
     private boolean isStarted = false;
     private boolean isCompleted = false;
     private Map<String, Object> variables;
 
+    private Map<String, Object> taskVariables;
 
-    public static ExecutionContext create(Engine engine, Execution execution, ProcessOM processOM) {
+
+    public Execution getExecution() {
+        if (execution == null) {
+            throw new IllegalStateException("Execution is not set in ExecutionContext.");
+        }
+
+        execution.setStatus(getStatus());
+        execution.setCurrentNodeId(getCurrentNodeId());
+        execution.setProcessVersion(getProcessVersion());
+        return execution;
+    }
+
+    public static ExecutionContext create(Engine engine, Execution execution, ProcessNode processNode) {
         ExecutionContext context = new ExecutionContext();
-        context.setProcessDefinitionId(processOM.getId());
+        context.setProcessDefinitionId(processNode.getId());
         context.setEngine(engine);
         context.setVariables(execution.getVariables());
         context.setExecution(execution);
@@ -36,7 +52,9 @@ public class ExecutionContext {
         context.setInstanceId(UUID.randomUUID());
         context.setParentExecutionId(null);
         context.setParentInstanceId(null);
-        context.setCurrentNodeId(processOM.getStartNode().getId());
+        context.setCurrentNodeId(processNode.getStartNode().getId());
+        context.setProcessVersion(execution.getProcessVersion());
+        context.setStatus(execution.getStatus());
         context.setStarted(true);
         return context;
     }
@@ -58,13 +76,13 @@ public class ExecutionContext {
 
     public Optional<Node> getCurrentNode() {
 
-        if (engine == null || processDefinitionId == null) {
+        if (getEngine() == null || getProcessDefinitionId() == null) {
             throw new EngineException("Engine or processId is not set in ExecutionContext.");
         }
 
-        Node node = engine.getProcess(processDefinitionId)
+        Node node = engine.getProcess(getProcessDefinitionId(), getProcessVersion())
                 .orElseThrow(() -> new EngineException("Process not found for id: " + processDefinitionId))
-                .getProcessOM()
+                .getProcessNode()
                 .getNode(currentNodeId);
 
         return Optional.ofNullable(node);
@@ -77,4 +95,7 @@ public class ExecutionContext {
         this.currentNodeId = nodeId;
     }
 
+    public boolean runnable() {
+        return !isCompleted() && isStarted() && getStatus() == Execution.Status.RUNNING;
+    }
 }

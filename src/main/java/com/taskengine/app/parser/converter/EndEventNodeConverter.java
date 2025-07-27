@@ -4,7 +4,6 @@ import com.taskengine.app.TEndEvent;
 import com.taskengine.app.core.data.om.EndEventNode;
 import org.springframework.stereotype.Component;
 
-@Component
 public class EndEventNodeConverter implements Converter<TEndEvent, EndEventNode> {
 
     @Override
@@ -18,7 +17,7 @@ public class EndEventNodeConverter implements Converter<TEndEvent, EndEventNode>
         return new EndEventNode(
                 source.getId(),
                 source.getName(),
-                context.getCurrentProcessOM()
+                context.getCurrentProcessNode()
         );
     }
 

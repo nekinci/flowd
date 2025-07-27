@@ -9,6 +9,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
+@Table(name = "PROCESS")
 public class PersistentProcess extends BaseEntity {
 
     @Id
@@ -18,6 +19,7 @@ public class PersistentProcess extends BaseEntity {
     private String definitionId;
     @Column(name = "VERSION")
     private Long version;
+
     @ManyToOne
     @JoinColumn(name = "FLOW_ID", nullable = false)
     private PersistentFlow flow;

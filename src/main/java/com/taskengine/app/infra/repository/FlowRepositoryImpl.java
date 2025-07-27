@@ -1,10 +1,12 @@
 package com.taskengine.app.infra.repository;
 
 import com.taskengine.app.core.data.entity.Flow;
+import com.taskengine.app.core.data.entity.Process;
 import com.taskengine.app.core.data.repository.FlowRepository;
 import com.taskengine.app.infra.persistence.PersistentFlow;
 import com.taskengine.app.infra.persistence.repository.PersistentFlowRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,13 +24,13 @@ public class FlowRepositoryImpl
     @Override
     public Optional<Flow> findById(UUID uuid) {
         return persistentFlowRepository.findById(uuid)
-                .map(this::toDomain);
+                .map(persistentFlow -> toDomain(new Flow(), persistentFlow));
     }
 
     @Override
+    @Transactional
     public Flow save(Flow entity) {
-        return toDomain(persistentFlowRepository.save(toEntity(entity)));
-
+        return toDomain(entity, persistentFlowRepository.save(toEntity(entity)));
     }
 
     @Override
@@ -60,8 +62,7 @@ public class FlowRepositoryImpl
     }
 
     @Override
-    public Flow toDomain(PersistentFlow entity) {
-        Flow flow = new Flow();
+    public Flow toDomain(Flow flow, PersistentFlow entity) {
         flow.setId(entity.getId());
         flow.setName(entity.getName());
         flow.setContent(entity.getContent());
@@ -72,6 +73,6 @@ public class FlowRepositoryImpl
     @Override
     public Optional<Flow> findByName(String name) {
         return persistentFlowRepository.findByName(name)
-                .map(this::toDomain);
+                .map(persistentFlow -> toDomain(new Flow(), persistentFlow));
     }
 }

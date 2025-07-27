@@ -4,7 +4,6 @@ import com.taskengine.app.TExclusiveGateway;
 import com.taskengine.app.core.data.om.ExclusiveGatewayNode;
 import org.springframework.stereotype.Component;
 
-@Component
 public class ExclusiveGatewayConverter implements Converter<TExclusiveGateway, ExclusiveGatewayNode> {
     @Override
     public Class<TExclusiveGateway> getSourceType() {
@@ -15,7 +14,7 @@ public class ExclusiveGatewayConverter implements Converter<TExclusiveGateway, E
     public ExclusiveGatewayNode convert(Context context, TExclusiveGateway source) {
         return new ExclusiveGatewayNode(
                 source.getId(),
-                context.getCurrentProcessOM(),
+                context.getCurrentProcessNode(),
                 source.getName(),
                 null
         );

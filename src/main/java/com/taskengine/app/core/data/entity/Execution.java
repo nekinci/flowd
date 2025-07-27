@@ -20,6 +20,7 @@ public class Execution extends AuditableEntity implements Entity {
 
     private UUID processId;
     private String processDefinitionId;
+    private Long processVersion;
 
     private Map<String, Object> variables;
 
@@ -30,6 +31,7 @@ public class Execution extends AuditableEntity implements Entity {
         WAITING_ACTION,
         COMPLETED,
         FAILED,
-        CANCELLED;
+        CANCELLED,
+        TASK_COMPLETED;
     }
 }

@@ -2,13 +2,15 @@ package com.taskengine.app.core.data.om;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+
 @Getter
-public class ExclusiveGatewayNode extends Node {
+public non-sealed class ExclusiveGatewayNode extends Node {
 
     private final String defaultFlow;
 
-    public ExclusiveGatewayNode(String id, ProcessOM processOM, String name, String defaultFlow) {
-        super(id, name, processOM, NodeType.EXCLUSIVE_GATEWAY);
+    public ExclusiveGatewayNode(String id, ProcessNode processNode, String name, String defaultFlow) {
+        super(id, name, processNode, NodeType.EXCLUSIVE_GATEWAY, new HashMap<>());
         this.defaultFlow = defaultFlow;
     }
 

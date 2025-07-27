@@ -4,7 +4,6 @@ import com.taskengine.app.TStartEvent;
 import com.taskengine.app.core.data.om.StartEventNode;
 import org.springframework.stereotype.Component;
 
-@Component
 public class StartNodeConverter implements Converter<TStartEvent, StartEventNode> {
 
     @Override

@@ -7,8 +7,6 @@ import com.taskengine.app.core.invoker.ServiceTaskInvokerRegistry;
 import com.taskengine.app.core.service.NodeHandler;
 import com.taskengine.app.core.service.engine.ExecutionContext;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 public class ServiceTaskNodeHandler implements NodeHandler<ServiceTaskNode> {
@@ -28,8 +26,9 @@ public class ServiceTaskNodeHandler implements NodeHandler<ServiceTaskNode> {
 
         ServiceTaskInvoker invoker = registry.getInvoker(invokerType.name())
                 .orElseThrow(() -> new IllegalArgumentException("No invoker found for type: " + invokerType));
-
-        logger.info("[ServiceTaskNode] Invoking service task with invoker: " + invoker.getClass().getName());
+        invoker.invoke(context, node.getAttributes());
+        context.moveTo(node.getOutgoing().get(0).getTargetRef().getId());
+        logger.info("[ServiceTaskNode] Invoking service task with invoker: ");
 
     }
 

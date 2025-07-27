@@ -12,7 +12,7 @@ public class StartEventNodeHandler implements NodeHandler<StartEventNode> {
 
     @Override
     public void handle(StartEventNode node, ExecutionContext context) {
-        logger.info("[StartEventNode] Handling StartEvent: {}" + node.getId());
+        logger.info("[StartEventNode] Handling StartEvent: " + node.getId());
         String id = node.getOutgoing().get(0).getTargetRef().getId();
         context.moveTo(id);
         logger.info("[StartEventNode] Moved to next node: " + id);
