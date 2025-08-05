@@ -13,7 +13,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract sealed class Node implements Element
-        permits EndEventNode, ExclusiveGatewayNode, ServiceTaskNode, StartEventNode, UserTaskNode {
+        permits EndEventNode, ExclusiveGatewayNode, ParallelGatewayNode, ServiceTaskNode, StartEventNode, UserTaskNode {
     protected String id;
     protected String name;
     protected ProcessNode processNode;
@@ -35,4 +35,16 @@ public abstract sealed class Node implements Element
     public void addOutgoing(Flow flow) {
         outgoing.add(flow);
     }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", processNode=" + processNode +
+                ", nodeType=" + nodeType +
+                ", attributes=" + attributes +
+                '}';
+    }
+
 }

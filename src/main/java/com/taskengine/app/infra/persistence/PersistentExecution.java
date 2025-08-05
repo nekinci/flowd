@@ -1,6 +1,5 @@
 package com.taskengine.app.infra.persistence;
 
-import com.taskengine.app.core.data.entity.Task;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,15 +42,19 @@ public class PersistentExecution extends BaseEntity{
 
     @ManyToOne
     @JoinColumn(name = "PARENT_EXECUTION_ID", referencedColumnName = "ID")
-    private PersistentExecution parentExecution;
+    private PersistentExecution parent;
 
     @ElementCollection
     @CollectionTable(name = "EXECUTION_VARIABLES", joinColumns = @JoinColumn(name = "EXECUTION_ID"))
     @MapKeyColumn(name = "VARIABLE_NAME")
     @Column(name = "VARIABLE_VALUE")
-    private Map<String, String> variables = new HashMap<>();
+    @Transient
+    private Map<String, Object> variables = new HashMap<>();
 
     @OneToMany(mappedBy = "persistentExecution", cascade = CascadeType.ALL)
     private List<PersistentTask> tasks = new ArrayList<>();
+
+    @Version
+    private Long version;
 
 }

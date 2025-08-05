@@ -1,6 +1,8 @@
 package com.taskengine.app.parser.converter;
 
 import com.taskengine.app.TExclusiveGateway;
+import com.taskengine.app.TFlowElement;
+import com.taskengine.app.TSequenceFlow;
 import com.taskengine.app.core.data.om.ExclusiveGatewayNode;
 import org.springframework.stereotype.Component;
 
@@ -12,11 +14,12 @@ public class ExclusiveGatewayConverter implements Converter<TExclusiveGateway, E
 
     @Override
     public ExclusiveGatewayNode convert(Context context, TExclusiveGateway source) {
+
         return new ExclusiveGatewayNode(
                 source.getId(),
                 context.getCurrentProcessNode(),
                 source.getName(),
-                null
+                source.getDefault() != null ? ((TFlowElement)((TSequenceFlow) source.getDefault()).getTargetRef()).getId() : null
         );
     }
 }

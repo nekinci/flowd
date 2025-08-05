@@ -5,9 +5,8 @@ import com.taskengine.app.core.data.om.Node;
 import com.taskengine.app.core.data.om.ProcessNode;
 import lombok.Data;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Data
 public class ExecutionContext implements Context {
@@ -42,17 +41,32 @@ public class ExecutionContext implements Context {
         return execution;
     }
 
+    public Execution createChildExecution(String outgoingId) {
+        Execution childExecution = new Execution();
+        childExecution.setId(UUID.randomUUID());
+        childExecution.setInstanceId(getInstanceId());
+        childExecution.setParentId(getExecutionId());
+        childExecution.setProcessDefinitionId(getProcessDefinitionId());
+        childExecution.setProcessId(getExecution().getProcessId());
+        childExecution.setProcessVersion(getProcessVersion());
+        childExecution.setStartTime(LocalDateTime.now());
+        childExecution.setStatus(Execution.Status.PLANNED);
+        childExecution.setCurrentNodeId(outgoingId);
+        childExecution.setVariables(getVariables());
+        return childExecution;
+    }
+
     public static ExecutionContext create(Engine engine, Execution execution, ProcessNode processNode) {
         ExecutionContext context = new ExecutionContext();
         context.setProcessDefinitionId(processNode.getId());
         context.setEngine(engine);
         context.setVariables(execution.getVariables());
         context.setExecution(execution);
-        context.setExecutionId(UUID.randomUUID());
+        context.setExecutionId(execution.getId());
         context.setInstanceId(UUID.randomUUID());
-        context.setParentExecutionId(null);
+        context.setParentExecutionId(execution.getParentId());
         context.setParentInstanceId(null);
-        context.setCurrentNodeId(processNode.getStartNode().getId());
+        context.setCurrentNodeId(execution.getCurrentNodeId() != null ? execution.getCurrentNodeId() : processNode.getStartNode().getId());
         context.setProcessVersion(execution.getProcessVersion());
         context.setStatus(execution.getStatus());
         context.setStarted(true);
@@ -86,6 +100,17 @@ public class ExecutionContext implements Context {
                 .getNode(currentNodeId);
 
         return Optional.ofNullable(node);
+    }
+
+
+    public void setCompleted() {
+        if (execution == null) {
+            throw new IllegalStateException("Execution is not set in ExecutionContext.");
+        }
+        this.isCompleted = true;
+        this.status = Execution.Status.COMPLETED;
+        execution.setStatus(Execution.Status.COMPLETED);
+        execution.setEndTime(LocalDateTime.now());
     }
 
     public void moveTo(String nodeId) {

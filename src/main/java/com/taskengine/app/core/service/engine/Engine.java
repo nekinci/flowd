@@ -1,6 +1,7 @@
 package com.taskengine.app.core.service.engine;
 
 import com.taskengine.app.core.data.entity.*;
+import com.taskengine.app.core.data.entity.Flow;
 import com.taskengine.app.core.data.entity.Process;
 import com.taskengine.app.core.data.om.Node;
 import com.taskengine.app.core.data.om.ProcessNode;
@@ -11,11 +12,13 @@ import com.taskengine.app.core.data.repository.TaskRepository;
 import com.taskengine.app.core.provider.Parser;
 import com.taskengine.app.core.provider.ParserException;
 import com.taskengine.app.core.service.HandlerRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.*;
 
 
 /**
@@ -24,6 +27,7 @@ import java.util.*;
  * <p>
  * This class represents the core engine of the task management system.
  */
+@Slf4j
 public class Engine {
 
 
@@ -36,6 +40,7 @@ public class Engine {
     private final TaskRepository taskRepository;
     private Status status;
     private final HandlerRegistry handlerRegistry;
+    private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10); // TODO inject via configuration
 
     public Engine(Parser parser,
                   ExecutionRepository executionRepository,
@@ -49,10 +54,12 @@ public class Engine {
         this.processRepository = processRepository;
         this.taskRepository = taskRepository;
         this.handlerRegistry = handlerRegistry;
+
     }
 
     public void start() {
         this.status = Status.RUNNING;
+        this.checkPlannedExecutionsPerioadically(); // TODO make this better
     }
 
     public void stop() {
@@ -238,6 +245,28 @@ public class Engine {
 
     public void startProcess(String processDefinitionId) {
         startProcess(processDefinitionId, new HashMap<>());
+    }
+
+    public void checkPlannedExecutionsPerioadically() {
+        // TODO fix handling concurrent executions
+      Runnable task = () -> {
+          checkIsRunning();
+          List<Execution> plannedExecutions = executionRepository.findExecutionsByStatusIn(List.of(Execution.Status.PLANNED));
+          for (Execution execution : plannedExecutions) {
+              Process process = getProcess(execution.getProcessDefinitionId(), execution.getProcessVersion())
+                      .orElseThrow(() -> new EngineException("Process with definition ID " + execution.getProcessDefinitionId() + " does not exist"));
+
+              ProcessNode processNode = process.getProcessNode();
+              ExecutionContext context = ExecutionContext.create(this, execution, processNode);
+              context.setStatus(Execution.Status.RUNNING);
+              executorService.execute(() -> runSync(context));
+          }
+
+          log.info("Checked waiting actions, found {} planned executions", plannedExecutions.size());
+      };
+
+      executorService.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
+
     }
 
 }

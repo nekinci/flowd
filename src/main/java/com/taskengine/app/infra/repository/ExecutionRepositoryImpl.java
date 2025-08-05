@@ -8,6 +8,7 @@ import com.taskengine.app.infra.persistence.repository.PersistentProcessReposito
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -68,7 +69,7 @@ public class ExecutionRepositoryImpl
         if (domainEntity.getParentId() != null) {
             PersistentExecution parentExecution = persistentExecutionRepository.findById(domainEntity.getParentId())
                     .orElseThrow(() -> new IllegalArgumentException("Parent execution not found for ID: " + domainEntity.getParentId()));
-            persistentExecution.setParentExecution(parentExecution);
+            persistentExecution.setParent(parentExecution);
         }
 
         persistentExecution.setPersistentProcess(persistentProcessRepository.findById(domainEntity.getProcessId())
@@ -80,7 +81,7 @@ public class ExecutionRepositoryImpl
         persistentExecution.setStartTime(domainEntity.getStartTime());
         persistentExecution.setEndTime(domainEntity.getEndTime());
         persistentExecution.setStatus(domainEntity.getStatus());
-       // persistentExecution.setVariables(domainEntity.getVariables());
+        persistentExecution.setVariables(domainEntity.getVariables());
 
         return persistentExecution;
     }
@@ -92,12 +93,53 @@ public class ExecutionRepositoryImpl
         execution.setProcessDefinitionId(entity.getProcessDefinitionId());
         execution.setProcessVersion(entity.getPersistentProcess().getVersion());
         execution.setProcessId(entity.getPersistentProcess().getId());
-       // execution.setVariables(entity.getVariables());
-        execution.setParentId(entity.getParentExecution() != null ? entity.getParentExecution().getId() : null);
+        execution.setVariables(entity.getVariables());
+        execution.setParentId(entity.getParent() != null ? entity.getParent().getId() : null);
         execution.setCurrentNodeId(entity.getCurrentNodeId());
         execution.setStartTime(entity.getStartTime());
         execution.setEndTime(entity.getEndTime());
         execution.setStatus(entity.getStatus());
+        execution.setVersion(entity.getVersion());
         return execution;
+    }
+
+    @Override
+    public Optional<Execution> findByIdAndVersion(UUID id, Long version) {
+        return persistentExecutionRepository.findByIdAndVersion(id, version)
+                .map(persistentExecution -> toDomain(new Execution(), persistentExecution));
+    }
+
+    @Override
+    public Execution saveByVersion(Execution parentExecution, long version) {
+        findByIdAndVersion(parentExecution.getId(), version)
+                .ifPresentOrElse(
+                        existingExecution -> {
+                            existingExecution.setVersion(version);
+                            save(existingExecution);
+                        },
+                        () -> {
+                            throw new IllegalArgumentException("Execution with ID " + parentExecution.getId() + " and version " + version + " not found.");
+                        }
+                );
+        return findById(parentExecution.getId()).get();
+    }
+
+    @Override
+    public List<Execution> getActiveExecutionsByParentId(UUID parentId) {
+        return persistentExecutionRepository.findByParentIdAndStatusIn(parentId, List.of(Execution.Status.WAITING,
+                        Execution.Status.RUNNING,
+                        Execution.Status.PLANNED,
+                        Execution.Status.WAITING_ACTION))
+                .stream()
+                .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
+                .toList();
+    }
+
+    @Override
+    public List<Execution> findExecutionsByStatusIn(List<Execution.Status> statusList) {
+        return persistentExecutionRepository.findByStatusIn(statusList)
+                .stream()
+                .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
+                .toList();
     }
 }

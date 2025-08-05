@@ -46,6 +46,8 @@ public class HandlerRegistry {
                     .handle(exclusiveGatewayNode, context);
             case UserTaskNode userTaskNode -> getHandler(UserTaskNode.class)
                     .handle(userTaskNode, context);
+            case ParallelGatewayNode parallelGatewayNode -> getHandler(ParallelGatewayNode.class)
+                    .handle(parallelGatewayNode, context);
             // Do not add a default case here, as it would mask errors
         }
     }

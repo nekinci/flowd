@@ -8,6 +8,7 @@ import com.taskengine.app.core.data.repository.ExecutionRepository;
 import com.taskengine.app.core.data.repository.FlowRepository;
 import com.taskengine.app.core.data.repository.ProcessRepository;
 import com.taskengine.app.core.data.repository.TaskRepository;
+import com.taskengine.app.core.expression.EvaluatorFactory;
 import com.taskengine.app.core.invoker.*;
 import com.taskengine.app.core.provider.Parser;
 import com.taskengine.app.core.service.HandlerRegistry;
@@ -87,5 +88,10 @@ public class SpringBeanExtensionConfiguration {
         }
 
         return new HandlerRegistry(handlerMap);
+    }
+
+    @Bean
+    public EvaluatorFactory evaluatorFactory() {
+        return new EvaluatorFactory();
     }
 }

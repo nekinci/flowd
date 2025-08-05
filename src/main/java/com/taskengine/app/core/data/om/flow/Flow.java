@@ -14,4 +14,5 @@ public abstract class Flow implements Element {
     private Node sourceRef;
     private Node targetRef;
     private String conditionExpression;
+    private String expressionLanguage;
 }

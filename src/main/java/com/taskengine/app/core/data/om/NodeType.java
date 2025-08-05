@@ -6,5 +6,5 @@ public enum NodeType {
     SERVICE_TASK,
     EXCLUSIVE_GATEWAY,
     USER_TASK,
-    END_NODE
+    PARALLEL_GATEWAY, END_NODE
 }

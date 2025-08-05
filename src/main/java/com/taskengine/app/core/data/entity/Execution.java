@@ -1,11 +1,13 @@
 package com.taskengine.app.core.data.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class Execution extends AuditableEntity implements Entity {
 
@@ -21,17 +23,23 @@ public class Execution extends AuditableEntity implements Entity {
     private UUID processId;
     private String processDefinitionId;
     private Long processVersion;
+    private Long childCount = 0L;
 
     private Map<String, Object> variables;
 
+    private Long version = 0L;
 
-
+    public void incrementVersion() {
+        version++;
+    }
     public enum Status {
         RUNNING,
         WAITING_ACTION,
         COMPLETED,
         FAILED,
         CANCELLED,
+        WAITING,
+        PLANNED,
         TASK_COMPLETED;
     }
 }
