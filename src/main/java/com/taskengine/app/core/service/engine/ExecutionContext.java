@@ -38,6 +38,7 @@ public class ExecutionContext implements Context {
         execution.setStatus(getStatus());
         execution.setCurrentNodeId(getCurrentNodeId());
         execution.setProcessVersion(getProcessVersion());
+        execution.setVariables(this.getVariables());
         return execution;
     }
 

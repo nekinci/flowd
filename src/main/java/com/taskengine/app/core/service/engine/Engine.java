@@ -251,6 +251,7 @@ public class Engine {
         // TODO fix handling concurrent executions
       Runnable task = () -> {
           checkIsRunning();
+          log.info("Checking for waiting actions...");
           List<Execution> plannedExecutions = executionRepository.findExecutionsByStatusIn(List.of(Execution.Status.PLANNED));
           for (Execution execution : plannedExecutions) {
               Process process = getProcess(execution.getProcessDefinitionId(), execution.getProcessVersion())
@@ -265,7 +266,7 @@ public class Engine {
           log.info("Checked waiting actions, found {} planned executions", plannedExecutions.size());
       };
 
-      executorService.scheduleAtFixedRate(task, 0, 3, TimeUnit.SECONDS);
+      executorService.scheduleAtFixedRate(task, 0, 2000, TimeUnit.MILLISECONDS);
 
     }
 

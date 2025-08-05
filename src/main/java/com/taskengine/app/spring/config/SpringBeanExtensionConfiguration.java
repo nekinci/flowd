@@ -1,5 +1,7 @@
 package com.taskengine.app.spring.config;
 
+import com.taskengine.app.application.ProcessService;
+import com.taskengine.app.application.ProcessServiceImpl;
 import com.taskengine.app.application.TaskService;
 import com.taskengine.app.application.TaskServiceImpl;
 import com.taskengine.app.core.data.om.InvokerType;
@@ -53,6 +55,11 @@ public class SpringBeanExtensionConfiguration {
     @Bean
     public TaskService taskService(Engine engine) {
         return new TaskServiceImpl(engine);
+    }
+
+    @Bean
+    public ProcessService processService(Engine engine) {
+        return new ProcessServiceImpl(engine);
     }
 
     @Bean

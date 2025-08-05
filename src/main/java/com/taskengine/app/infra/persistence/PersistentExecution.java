@@ -47,9 +47,9 @@ public class PersistentExecution extends BaseEntity{
     @ElementCollection
     @CollectionTable(name = "EXECUTION_VARIABLES", joinColumns = @JoinColumn(name = "EXECUTION_ID"))
     @MapKeyColumn(name = "VARIABLE_NAME")
-    @Column(name = "VARIABLE_VALUE")
-    @Transient
-    private Map<String, Object> variables = new HashMap<>();
+    @Column(name = "VARIABLE_VALUE", columnDefinition = "CLOB")
+    @Convert(converter = TypedValueConverter.class)
+    private Map<String, TypedValue> variables = new HashMap<>();
 
     @OneToMany(mappedBy = "persistentExecution", cascade = CascadeType.ALL)
     private List<PersistentTask> tasks = new ArrayList<>();

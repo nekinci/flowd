@@ -3,14 +3,17 @@ package com.taskengine.app.infra.repository;
 import com.taskengine.app.core.data.entity.Execution;
 import com.taskengine.app.core.data.repository.ExecutionRepository;
 import com.taskengine.app.infra.persistence.PersistentExecution;
+import com.taskengine.app.infra.persistence.TypedValue;
 import com.taskengine.app.infra.persistence.repository.PersistentExecutionRepository;
 import com.taskengine.app.infra.persistence.repository.PersistentProcessRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class ExecutionRepositoryImpl
@@ -76,12 +79,14 @@ public class ExecutionRepositoryImpl
                 .orElseThrow());
         persistentExecution.setProcessDefinitionId(domainEntity.getProcessDefinitionId());
 
+        Map<String, TypedValue> values = domainEntity.getVariables().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> new TypedValue(entry.getValue().getClass().getName(), entry.getValue())));
 
         persistentExecution.setCurrentNodeId(domainEntity.getCurrentNodeId());
         persistentExecution.setStartTime(domainEntity.getStartTime());
         persistentExecution.setEndTime(domainEntity.getEndTime());
         persistentExecution.setStatus(domainEntity.getStatus());
-        persistentExecution.setVariables(domainEntity.getVariables());
+        persistentExecution.setVariables(values);
 
         return persistentExecution;
     }
@@ -93,7 +98,9 @@ public class ExecutionRepositoryImpl
         execution.setProcessDefinitionId(entity.getProcessDefinitionId());
         execution.setProcessVersion(entity.getPersistentProcess().getVersion());
         execution.setProcessId(entity.getPersistentProcess().getId());
-        execution.setVariables(entity.getVariables());
+        Map<String, Object> variables = entity.getVariables().entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getValue()));
+        execution.setVariables(variables);
         execution.setParentId(entity.getParent() != null ? entity.getParent().getId() : null);
         execution.setCurrentNodeId(entity.getCurrentNodeId());
         execution.setStartTime(entity.getStartTime());
@@ -102,6 +109,8 @@ public class ExecutionRepositoryImpl
         execution.setVersion(entity.getVersion());
         return execution;
     }
+
+
 
     @Override
     public Optional<Execution> findByIdAndVersion(UUID id, Long version) {
@@ -136,6 +145,7 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
+    @Transactional
     public List<Execution> findExecutionsByStatusIn(List<Execution.Status> statusList) {
         return persistentExecutionRepository.findByStatusIn(statusList)
                 .stream()

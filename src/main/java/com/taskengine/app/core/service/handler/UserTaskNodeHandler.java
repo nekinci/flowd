@@ -38,6 +38,10 @@ public class UserTaskNodeHandler implements NodeHandler<UserTaskNode> {
             context.moveTo(id);
             logger.info("[UserTaskNode] Moved to next node: " + id);
 
+            if (context.getTaskVariables() != null) {
+                context.getTaskVariables().forEach(context::setVariable);
+            }
+
             return;
         }
 
