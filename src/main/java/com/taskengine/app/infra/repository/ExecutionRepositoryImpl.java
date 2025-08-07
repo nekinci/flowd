@@ -141,7 +141,7 @@ public class ExecutionRepositoryImpl
                         Execution.Status.WAITING_ACTION))
                 .stream()
                 .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -150,6 +150,6 @@ public class ExecutionRepositoryImpl
         return persistentExecutionRepository.findByStatusIn(statusList)
                 .stream()
                 .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

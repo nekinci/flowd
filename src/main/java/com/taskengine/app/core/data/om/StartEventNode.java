@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public non-sealed class StartEventNode extends Node {
+public class StartEventNode extends Node {
 
 
     private boolean isDefault = false;

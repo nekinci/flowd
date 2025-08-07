@@ -13,6 +13,6 @@ public class ProcessServiceImpl implements ProcessService{
 
     @Override
     public void startProcess(ProcessStartAction action) {
-     engine.startProcess(action.processDefinitionId(), action.variables());
+     engine.startProcess(action.getProcessDefinitionId(), action.getVariables());
     }
 }

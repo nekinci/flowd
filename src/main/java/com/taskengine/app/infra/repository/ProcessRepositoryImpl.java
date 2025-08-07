@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class ProcessRepositoryImpl extends DomainEntityConverter<Process, PersistentProcess>
@@ -43,7 +44,7 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
                 .findByDefinitionId(definitionId)
                 .stream()
                 .map(persistentProcess -> toDomain(new Process(), persistentProcess))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

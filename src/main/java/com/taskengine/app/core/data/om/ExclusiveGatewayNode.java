@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.HashMap;
 
 @Getter
-public non-sealed class ExclusiveGatewayNode extends Node {
+public class ExclusiveGatewayNode extends Node {
 
     private final String defaultFlow;
 

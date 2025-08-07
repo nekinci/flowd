@@ -1,6 +1,6 @@
 package com.taskengine.app.core.data.om.extension;
 
-public record InputOutput(String name, String value)
+public class InputOutput
         implements Extension {
-
+        private String name; private String value;
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.util.Map;
 
 @Getter
-public non-sealed class ServiceTaskNode extends Node {
+public class ServiceTaskNode extends Node {
 
 
     public static final String SERVICE_TASK_PROPERTY = "serviceTask";

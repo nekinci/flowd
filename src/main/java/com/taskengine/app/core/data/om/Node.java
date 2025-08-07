@@ -12,8 +12,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract sealed class Node implements Element
-        permits EndEventNode, ExclusiveGatewayNode, ParallelGatewayNode, ServiceTaskNode, StartEventNode, UserTaskNode {
+public abstract class Node implements Element {
     protected String id;
     protected String name;
     protected ProcessNode processNode;

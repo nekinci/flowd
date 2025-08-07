@@ -35,20 +35,26 @@ public class HandlerRegistry {
 
     public void dispatch(Node node, ExecutionContext context) {
 
-        switch (node) {
-            case StartEventNode startEventNode -> getHandler(StartEventNode.class)
-                    .handle(startEventNode, context);
-            case EndEventNode endEventNode -> getHandler(EndEventNode.class)
-                    .handle(endEventNode, context);
-            case ServiceTaskNode serviceTaskNode -> getHandler(ServiceTaskNode.class)
-                    .handle(serviceTaskNode, context);
-            case ExclusiveGatewayNode exclusiveGatewayNode -> getHandler(ExclusiveGatewayNode.class)
-                    .handle(exclusiveGatewayNode, context);
-            case UserTaskNode userTaskNode -> getHandler(UserTaskNode.class)
-                    .handle(userTaskNode, context);
-            case ParallelGatewayNode parallelGatewayNode -> getHandler(ParallelGatewayNode.class)
-                    .handle(parallelGatewayNode, context);
-            // Do not add a default case here, as it would mask errors
+
+        if (node instanceof StartEventNode) {
+            getHandler(StartEventNode.class)
+                    .handle((StartEventNode) node, context);
+        } else if (node instanceof EndEventNode) {
+            getHandler(EndEventNode.class)
+                    .handle((EndEventNode) node, context);
+        } else if (node instanceof ServiceTaskNode) {
+            getHandler(ServiceTaskNode.class)
+                    .handle((ServiceTaskNode) node, context);
+        } else if (node instanceof ExclusiveGatewayNode) {
+            getHandler(ExclusiveGatewayNode.class)
+                    .handle((ExclusiveGatewayNode) node, context);
+        } else if (node instanceof UserTaskNode) {
+            getHandler(UserTaskNode.class)
+                    .handle((UserTaskNode) node, context);
+        } else if (node instanceof ParallelGatewayNode) {
+            getHandler(ParallelGatewayNode.class)
+                    .handle((ParallelGatewayNode) node, context);
         }
+
     }
 }

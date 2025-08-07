@@ -1,12 +1,17 @@
 package com.taskengine.app.application.action;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.UUID;
 
-public record ClaimTaskAction(UUID taskId, String username) {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class ClaimTaskAction {
 
-    public ClaimTaskAction {
-        if (taskId == null) {
-            throw new IllegalArgumentException("Task ID must not be null");
-        }
-    }
+    private UUID taskId;
+    private String username;
+
 }

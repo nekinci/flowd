@@ -4,7 +4,7 @@ import com.taskengine.app.core.data.om.flow.Flow;
 
 import java.util.Map;
 
-public non-sealed class ParallelGatewayNode extends Node {
+public class ParallelGatewayNode extends Node {
 
     public ParallelGatewayNode(String id,
                                ProcessNode processNode,

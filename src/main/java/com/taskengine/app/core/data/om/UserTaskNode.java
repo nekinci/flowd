@@ -8,8 +8,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public non-sealed class UserTaskNode extends Node {
+public class UserTaskNode extends Node {
 
     private String assignee;
     private String group;

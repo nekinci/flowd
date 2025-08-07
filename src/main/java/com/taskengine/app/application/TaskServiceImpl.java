@@ -15,11 +15,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void completeTask(TaskCompletedAction action) {
-        engine.completeTask(action.taskId(), action.variables());
+        engine.completeTask(action.getTaskId(), action.getVariables());
     }
 
     @Override
     public void claimTask(ClaimTaskAction action) {
-        engine.claimTask(action.taskId(), action.username());
+        engine.claimTask(action.getTaskId(), action.getUsername());
     }
 }
