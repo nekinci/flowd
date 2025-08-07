@@ -2,10 +2,12 @@ package com.taskengine.app.infra.persistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Convert;
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Convert;
 
 @Convert
-public class TypedValueConverter implements jakarta.persistence.AttributeConverter<TypedValue, String> {
+public class TypedValueConverter implements AttributeConverter<TypedValue, String> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

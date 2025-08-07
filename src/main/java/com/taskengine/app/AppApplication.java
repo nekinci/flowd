@@ -2,12 +2,12 @@ package com.taskengine.app;
 
 import com.taskengine.app.core.provider.ParserException;
 import com.taskengine.app.core.service.engine.Engine;
-import jakarta.annotation.PostConstruct;
 import org.graalvm.polyglot.HostAccess;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.ResourceUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;

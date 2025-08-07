@@ -6,9 +6,10 @@ import com.taskengine.app.core.provider.Parser;
 import com.taskengine.app.core.provider.ParserException;
 import com.taskengine.app.parser.converter.Context;
 import com.taskengine.app.parser.converter.ConverterService;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.Unmarshaller;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class BpmnParser implements Parser {
     private final ConverterService converterService;
@@ -30,6 +32,10 @@ public class BpmnParser implements Parser {
        try {
            JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class);
            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+           unmarshaller.setEventHandler(event -> {
+               log.error("Error during unmarshalling: {} {}", event.getMessage(), event);
+               return false;
+           });
            JAXBElement<TDefinitions> xml = (JAXBElement<TDefinitions>) unmarshaller.unmarshal(is);
            return convert(xml);
        } catch (Exception e) {

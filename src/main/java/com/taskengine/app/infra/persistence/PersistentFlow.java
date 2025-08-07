@@ -1,9 +1,8 @@
 package com.taskengine.app.infra.persistence;
 
 import com.taskengine.app.core.data.entity.FlowKind;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 

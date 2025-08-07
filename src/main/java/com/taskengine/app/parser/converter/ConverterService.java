@@ -10,7 +10,6 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-@Service
 public class ConverterService {
 
 

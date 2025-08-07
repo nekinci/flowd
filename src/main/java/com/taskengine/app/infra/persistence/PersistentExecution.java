@@ -1,6 +1,6 @@
 package com.taskengine.app.infra.persistence;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +48,7 @@ public class PersistentExecution extends BaseEntity{
     @CollectionTable(name = "EXECUTION_VARIABLES", joinColumns = @JoinColumn(name = "EXECUTION_ID"))
     @MapKeyColumn(name = "VARIABLE_NAME")
     @Column(name = "VARIABLE_VALUE", columnDefinition = "CLOB")
-    @Convert(converter = TypedValueConverter.class)
+    @Convert(attributeName = "value", converter = TypedValueConverter.class)
     private Map<String, TypedValue> variables = new HashMap<>();
 
     @OneToMany(mappedBy = "persistentExecution", cascade = CascadeType.ALL)

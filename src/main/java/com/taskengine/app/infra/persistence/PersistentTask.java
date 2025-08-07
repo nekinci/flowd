@@ -1,7 +1,7 @@
 package com.taskengine.app.infra.persistence;
 
 import com.taskengine.app.core.data.entity.Task;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
