@@ -1178,7 +1178,7 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:element name="processNode" type="tProcess" substitutionGroup="rootElement"/>
+	<xsd:element name="process" type="tProcess" substitutionGroup="rootElement"/>
 	<xsd:complexType name="tProcess">
 		<xsd:complexContent>
 			<xsd:extension base="tCallableElement">
@@ -1419,7 +1419,7 @@
 		</xsd:complexContent>
 	</xsd:complexType>	
 
-	<xsd:element name="startEventNode" type="tStartEvent" substitutionGroup="flowElement"/>
+	<xsd:element name="startEvent" type="tStartEvent" substitutionGroup="flowElement"/>
 	<xsd:complexType name="tStartEvent">
 		<xsd:complexContent>
 			<xsd:extension base="tCatchEvent">

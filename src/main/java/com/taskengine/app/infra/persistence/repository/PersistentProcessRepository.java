@@ -18,8 +18,13 @@ public interface PersistentProcessRepository
 
     @Query("SELECT p FROM PersistentProcess p " +
            "WHERE p.definitionId = ?1 " +
-           "ORDER BY p.version DESC LIMIT 1")
-    Optional<PersistentProcess> findLatestVersionByDefinitionId(String definitionId);
+           "ORDER BY p.version DESC")
+    List<PersistentProcess> findLatestVersionByDefinitionIdHelper(String definitionId);
+
+    default Optional<PersistentProcess> findLatestVersionByDefinitionId(String definitionId) {
+        List<PersistentProcess> processes = findLatestVersionByDefinitionIdHelper(definitionId);
+        return processes.isEmpty() ? Optional.empty() : Optional.of(processes.get(0));
+    }
 
     List<PersistentProcess> findByDefinitionId(String definitionId);
 

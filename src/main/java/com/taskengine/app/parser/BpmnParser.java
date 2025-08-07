@@ -30,13 +30,13 @@ public class BpmnParser implements Parser {
     @Override
     public List<ProcessNode> parse(InputStream is) throws ParserException {
        try {
-           JAXBContext jaxbContext = JAXBContext.newInstance(TDefinitions.class);
+           JAXBContext jaxbContext = JAXBContext.newInstance("com.taskengine.app");
            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
            unmarshaller.setEventHandler(event -> {
                log.error("Error during unmarshalling: {} {}", event.getMessage(), event);
                return false;
            });
-           JAXBElement<TDefinitions> xml = (JAXBElement<TDefinitions>) unmarshaller.unmarshal(is);
+           JAXBElement<TDefinitions> xml = (JAXBElement<TDefinitions>) unmarshaller.unmarshal(new javax.xml.transform.stream.StreamSource(is), TDefinitions.class);
            return convert(xml);
        } catch (Exception e) {
            throw new ParserException("Error parsing BPMN XML", e);
