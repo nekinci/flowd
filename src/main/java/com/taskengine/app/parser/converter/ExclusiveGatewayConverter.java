@@ -4,7 +4,6 @@ import com.taskengine.app.TExclusiveGateway;
 import com.taskengine.app.TFlowElement;
 import com.taskengine.app.TSequenceFlow;
 import com.taskengine.app.core.data.om.ExclusiveGatewayNode;
-import org.springframework.stereotype.Component;
 
 public class ExclusiveGatewayConverter implements Converter<TExclusiveGateway, ExclusiveGatewayNode> {
     @Override

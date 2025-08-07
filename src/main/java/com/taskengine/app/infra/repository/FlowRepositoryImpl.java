@@ -6,6 +6,7 @@ import com.taskengine.app.core.data.repository.FlowRepository;
 import com.taskengine.app.infra.persistence.PersistentFlow;
 import com.taskengine.app.infra.persistence.repository.PersistentFlowRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -28,9 +29,9 @@ public class FlowRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Flow save(Flow entity) {
-        return toDomain(entity, persistentFlowRepository.save(toEntity(entity)));
+        return toDomain(entity, persistentFlowRepository.saveAndFlush(toEntity(entity)));
     }
 
     @Override

@@ -86,7 +86,7 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
         persistentProcess.setVersion(domainEntity.getVersion());
 
         persistentProcess.setFlow(flowRepository.findById(domainEntity.getFlowId()).orElseThrow(
-                () -> new IllegalArgumentException("Flow not found for ID: " + domainEntity.getFlowId())));
+                () ->  new IllegalArgumentException("Flow not found for ID: " + domainEntity.getFlowId())));
         return persistentProcess;
     }
 
