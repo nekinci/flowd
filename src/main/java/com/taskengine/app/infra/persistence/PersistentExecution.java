@@ -36,7 +36,8 @@ public class PersistentExecution extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private com.taskengine.app.core.data.entity.Execution.Status status;
 
-    @Column(name = "INSTANCE_ID")
+    @Column(name = "INSTANCE_ID", length = 36, columnDefinition = "CHAR(36)")
+    @Type(type = "uuid-char")
     private UUID instanceId;
 
     @Column(name = "CURRENT_NODE_ID")
@@ -58,5 +59,8 @@ public class PersistentExecution extends BaseEntity{
 
     @Version
     private Long version;
+
+
+
 
 }

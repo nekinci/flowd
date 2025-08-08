@@ -4,6 +4,8 @@ import com.taskengine.app.core.data.entity.Execution;
 import com.taskengine.app.core.data.entity.Task;
 import com.taskengine.app.core.data.om.UserTaskNode;
 import com.taskengine.app.core.data.repository.TaskRepository;
+import com.taskengine.app.core.expression.EvaluatorFactory;
+import com.taskengine.app.core.expression.ExpressionContext;
 import com.taskengine.app.core.service.NodeHandler;
 import com.taskengine.app.core.service.engine.ExecutionContext;
 
@@ -15,9 +17,11 @@ public class UserTaskNodeHandler implements NodeHandler<UserTaskNode> {
     private static final Logger logger = Logger.getLogger(UserTaskNodeHandler.class.getName());
 
     private final TaskRepository taskRepository;
+    private final EvaluatorFactory evaluatorFactory;
 
-    public UserTaskNodeHandler(TaskRepository taskRepository) {
+    public UserTaskNodeHandler(TaskRepository taskRepository, EvaluatorFactory evaluatorFactory) {
         this.taskRepository = taskRepository;
+        this.evaluatorFactory = evaluatorFactory;
     }
 
     @Override
@@ -30,6 +34,7 @@ public class UserTaskNodeHandler implements NodeHandler<UserTaskNode> {
 
             Task task = taskRepository.findById(context.getTaskId())
                     .orElseThrow(() -> new IllegalArgumentException("No task found for execution: " + context.getExecution().getId()));
+            task.setTaskDescription("Task resumed by user: " + task.getAssignee());
             task.setStatus(Task.TaskStatus.COMPLETED);
             taskRepository.save(task);
             logger.info("[UserTaskNode] Task marked as completed: " + task.getId());
@@ -38,6 +43,7 @@ public class UserTaskNodeHandler implements NodeHandler<UserTaskNode> {
             context.moveTo(id);
             logger.info("[UserTaskNode] Moved to next node: " + id);
 
+            context.setStatus(Execution.Status.PLANNED);
             if (context.getTaskVariables() != null) {
                 context.getTaskVariables().forEach(context::setVariable);
             }
@@ -46,15 +52,29 @@ public class UserTaskNodeHandler implements NodeHandler<UserTaskNode> {
         }
 
         context.setStatus(Execution.Status.WAITING_ACTION);
+
+        String assignee = node.getAssignee();
+        String group = node.getGroup();
+
+        if (assignee != null) {
+            assignee = (String) evaluatorFactory.createEvaluator("javascript")
+                    .evaluate(assignee, new ExpressionContext(context.getVariables()));
+        }
+
+        if (group != null) {
+            group = (String) evaluatorFactory.createEvaluator("javascript")
+                    .evaluate(group, new ExpressionContext(context.getVariables()));
+        }
+
         taskRepository.save(new Task(
                 UUID.randomUUID(),
-                node.getAssignee(),
-                node.getGroup(),
+                assignee,
+                group,
                 context.getExecution().getId(),
                 node.getId(),
                 node.getName(),
                 "Waiting for user action",
-                Task.TaskStatus.UNCLAIMED
+                assignee != null ? Task.TaskStatus.CLAIMED : Task.TaskStatus.UNCLAIMED
         ));
         logger.info("[UserTaskNode] is waiting for user action: " + node.getId());
 

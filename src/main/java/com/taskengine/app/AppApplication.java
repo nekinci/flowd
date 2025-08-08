@@ -43,7 +43,7 @@ public class AppApplication {
 
     @PostConstruct
 	public void test() throws IOException, ParserException {
-		InputStream inputStream = ResourceUtils.getURL("classpath:bpmn/diagram2.bpmn").openStream();
+		InputStream inputStream = ResourceUtils.getURL("classpath:bpmn/myFlow.bpmn").openStream();
 
 		engine.start();
 		engine.uploadFlow(inputStream.readAllBytes());

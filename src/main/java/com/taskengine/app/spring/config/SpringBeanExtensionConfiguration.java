@@ -16,6 +16,7 @@ import com.taskengine.app.core.provider.Parser;
 import com.taskengine.app.core.service.HandlerRegistry;
 import com.taskengine.app.core.service.NodeHandler;
 import com.taskengine.app.core.service.engine.Engine;
+import com.taskengine.app.customization.SalesRegionalGroupSetAction;
 import com.taskengine.app.parser.BpmnParser;
 import com.taskengine.app.parser.converter.Converter;
 import com.taskengine.app.parser.converter.ConverterService;
@@ -65,7 +66,9 @@ public class SpringBeanExtensionConfiguration {
     @Bean
     public ActionRegistry actionRegistry() {
         var registry = new ActionRegistry();
+        // Automatic lookup needed for custom actions
         registry.registerAction("EchoAction", new EchoAction());
+        registry.registerAction("SalesRegionalGroupSetAction", new SalesRegionalGroupSetAction());
         return registry;
     }
 

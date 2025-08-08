@@ -260,6 +260,7 @@ public class Engine {
               ProcessNode processNode = process.getProcessNode();
               ExecutionContext context = ExecutionContext.create(this, execution, processNode);
               context.setStatus(Execution.Status.RUNNING);
+              persistContext(context); // TODO handle exceptional cases
               executorService.execute(() -> runSync(context));
           }
 

@@ -24,7 +24,7 @@ public class TaskResource {
     }
 
     @PostMapping("/{taskId}/claim")
-    public void claimTask(@PathVariable("/taskId") UUID taskId, @RequestParam String username) {
+    public void claimTask(@PathVariable("taskId") UUID taskId, @RequestParam String username) {
         taskService.claimTask(new ClaimTaskAction(taskId, username));
     }
 }

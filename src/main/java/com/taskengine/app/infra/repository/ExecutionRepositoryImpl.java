@@ -7,6 +7,7 @@ import com.taskengine.app.infra.persistence.TypedValue;
 import com.taskengine.app.infra.persistence.repository.PersistentExecutionRepository;
 import com.taskengine.app.infra.persistence.repository.PersistentProcessRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
+    @Transactional
     public Optional<Execution> findById(UUID uuid) {
         return persistentExecutionRepository.findById(uuid)
                 .map(persistentExecution -> {
@@ -38,7 +40,7 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Execution save(Execution entity) {
         PersistentExecution persistentExecution = toEntity(entity);
         return toDomain(entity, persistentExecutionRepository.save(persistentExecution));
@@ -70,8 +72,7 @@ public class ExecutionRepositoryImpl
         persistentExecution.setInstanceId(domainEntity.getInstanceId());
 
         if (domainEntity.getParentId() != null) {
-            PersistentExecution parentExecution = persistentExecutionRepository.findById(domainEntity.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Parent execution not found for ID: " + domainEntity.getParentId()));
+            PersistentExecution parentExecution = persistentExecutionRepository.getReferenceById(domainEntity.getParentId());
             persistentExecution.setParent(parentExecution);
         }
 
@@ -119,12 +120,13 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Execution saveByVersion(Execution parentExecution, long version) {
         findByIdAndVersion(parentExecution.getId(), version)
                 .ifPresentOrElse(
                         existingExecution -> {
-                            existingExecution.setVersion(version);
-                            save(existingExecution);
+                            parentExecution.setVersion(version);
+                            save(parentExecution);
                         },
                         () -> {
                             throw new IllegalArgumentException("Execution with ID " + parentExecution.getId() + " and version " + version + " not found.");
@@ -134,11 +136,22 @@ public class ExecutionRepositoryImpl
     }
 
     @Override
+    @Transactional
     public List<Execution> getActiveExecutionsByParentId(UUID parentId) {
         return persistentExecutionRepository.findByParentIdAndStatusIn(parentId, List.of(Execution.Status.WAITING,
                         Execution.Status.RUNNING,
                         Execution.Status.PLANNED,
                         Execution.Status.WAITING_ACTION))
+                .stream()
+                .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<Execution> getCompletedExecutionsByParentId(UUID parentId) {
+        return persistentExecutionRepository.findByParentIdAndStatusIn(parentId, List.of(Execution.Status.CANCELLED,
+                        Execution.Status.COMPLETED))
                 .stream()
                 .map(persistentExecution -> toDomain(new Execution(), persistentExecution))
                 .collect(Collectors.toList());

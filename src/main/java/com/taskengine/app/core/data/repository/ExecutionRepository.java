@@ -14,5 +14,7 @@ public interface ExecutionRepository
 
     List<Execution> getActiveExecutionsByParentId(UUID parentId);
 
+    List<Execution> getCompletedExecutionsByParentId(UUID parentId);
+
     List<Execution> findExecutionsByStatusIn(List<Execution.Status> statusList);
 }

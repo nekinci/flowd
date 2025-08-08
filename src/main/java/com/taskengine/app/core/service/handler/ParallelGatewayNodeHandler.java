@@ -9,7 +9,9 @@ import com.taskengine.app.core.service.engine.EngineException;
 import com.taskengine.app.core.service.engine.ExecutionContext;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ParallelGatewayNodeHandler implements NodeHandler<ParallelGatewayNode> {
 
@@ -35,21 +37,25 @@ public class ParallelGatewayNodeHandler implements NodeHandler<ParallelGatewayNo
                     .orElseThrow(() -> new EngineException("Parent execution not found for joining parallel gateway: " + node.getId()));
             long version = parentExecution.getVersion();
             parentExecution.setVersion(version + 1);
-            context.getExecution().setStatus(Execution.Status.COMPLETED);
+            context.setStatus(Execution.Status.COMPLETED);
 
+            log.info("[ParallelGatewayNode] Parent execution updated to version: " + parentExecution.getVersion());
 
             int expected = node.getIncoming().size();
 
-            List<Execution> activeChildren =
-                    executionRepository.getActiveExecutionsByParentId(context.getParentExecutionId());
+            List<Execution> completedChildren =
+                    executionRepository.getCompletedExecutionsByParentId(context.getParentExecutionId())
+                            .stream()
+                            .filter(execution -> !Objects.equals(context.getExecutionId(), execution.getId()))
+                            .collect(Collectors.toList());
 
-            log.info("[ParallelGatewayNode] Active children count: " + activeChildren.size() + ", expected: " + expected);
+            log.info("[ParallelGatewayNode] Completed children count: " + completedChildren.size() + ", expected: " + expected);
 
-            if (activeChildren.size() < expected) {
+            if (completedChildren.size() != expected - 1) {
                 log.info("[ParallelGatewayNode] Not all child executions are completed yet. Waiting for more children to complete.");
+                executionRepository.saveByVersion(parentExecution, version);
                 return; // Wait for all child executions to complete
             }
-
 
             parentExecution.setStatus(Execution.Status.PLANNED);
             parentExecution.setCurrentNodeId(node.getOutgoing().get(0).getTargetRef().getId());
@@ -59,7 +65,6 @@ public class ParallelGatewayNodeHandler implements NodeHandler<ParallelGatewayNo
 
         } else {
 
-            context.getExecution().setChildCount((long) node.getOutgoing().size());
             for (Flow outgoing : node.getOutgoing()) {
                 String targetId = outgoing.getTargetRef().getId();
                 Execution childExecution = context.createChildExecution(targetId);

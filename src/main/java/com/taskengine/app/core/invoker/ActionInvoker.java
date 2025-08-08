@@ -18,9 +18,10 @@ public class ActionInvoker
 
     @Override
     public void invoke(ExecutionContext context, Map<String, String> attributes) {
+        ActionExecution actionExecution = new ActionExecution(context);
         actionRegistry.getAction(attributes.get("action"))
                 .orElseThrow(() -> new EngineException("Action implementation could not be found: " + attributes.get("action")))
-                .execute(new ActionExecution(context));
+                .execute(actionExecution);
 
     }
 
