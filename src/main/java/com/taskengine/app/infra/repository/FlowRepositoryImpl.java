@@ -29,9 +29,9 @@ public class FlowRepositoryImpl
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Flow save(Flow entity) {
-        return toDomain(entity, persistentFlowRepository.saveAndFlush(toEntity(entity)));
+        PersistentFlow persistentFlow = persistentFlowRepository.save(toEntity(entity));
+        return toDomain(entity, persistentFlow);
     }
 
     @Override

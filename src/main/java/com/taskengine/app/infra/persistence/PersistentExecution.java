@@ -3,6 +3,7 @@ package com.taskengine.app.infra.persistence;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -14,7 +15,8 @@ import java.util.*;
 public class PersistentExecution extends BaseEntity{
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "ID", length = 36, columnDefinition = "CHAR(36)")
+    @Type(type = "uuid-char")
     private UUID id;
 
     @ManyToOne(optional = false)

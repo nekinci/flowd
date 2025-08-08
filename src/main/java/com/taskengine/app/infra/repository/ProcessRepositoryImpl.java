@@ -56,7 +56,7 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
     @Override
     @Transactional
     public Process save(Process entity) {
-        return toDomain(entity, persistentProcessRepository.save(toEntity(entity)));
+        return toDomain(entity, persistentProcessRepository.saveAndFlush(toEntity(entity)));
     }
 
     @Override
@@ -84,9 +84,7 @@ public class ProcessRepositoryImpl extends DomainEntityConverter<Process, Persis
 
         persistentProcess.setDefinitionId(domainEntity.getDefinitionId());
         persistentProcess.setVersion(domainEntity.getVersion());
-
-        persistentProcess.setFlow(flowRepository.findById(domainEntity.getFlowId()).orElseThrow(
-                () ->  new IllegalArgumentException("Flow not found for ID: " + domainEntity.getFlowId())));
+        persistentProcess.setFlow(flowRepository.getReferenceById(domainEntity.getFlowId()));
         return persistentProcess;
     }
 
